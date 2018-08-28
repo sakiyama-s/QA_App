@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,12 +91,22 @@ public class LoginActivity extends AppCompatActivity {
                         String name = mNameEditText.getText().toString();
 
 
-                        Map<String, String> data = new HashMap<String, String>();
+                        Map<String,String> data = new HashMap<>();
                         data.put("name", name);
+                        //data.put("tes",name);
+
+
+                        //Map<String, User> data = new HashMap<>();
+                        //data.put("name", new User(name));
+
+
+
                         userRef.setValue(data);
 
                         // 表示名をPrefarenceに保存する
                         saveName(name);
+
+                        Log.d("sa-ki","アカウント登録");
                     } else {
                         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
