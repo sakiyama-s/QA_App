@@ -1,9 +1,11 @@
 package jp.techacademy.shohei.sakiyama.qa_app;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,6 +24,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
     private Question mQuestion;
     private QuestionDetailListAdapter mAdapter;
 
+
     private DatabaseReference mAnswerRef;
 
     private ChildEventListener mEventListener = new ChildEventListener() {
@@ -31,7 +34,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
             String answerUid = dataSnapshot.getKey();
 
-            for(Answer answer : mQuestion.getAnswers()) {
+            for (Answer answer : mQuestion.getAnswers()) {
                 // 同じAnswerUidのものが存在しているときは何もしない
                 if (answerUid.equals(answer.getAnswerUid())) {
                     return;
@@ -77,7 +80,24 @@ public class QuestionDetailActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         mQuestion = (Question) extras.get("question");
 
+        Button mButtonFav = (Button) findViewById(R.id.button_fav);
+
         setTitle(mQuestion.getTitle());
+
+        // ログイン済みのユーザであればお気に入り登録ボタンを表示する
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Button buttonFav = (Button) findViewById(R.id.button_fav);
+        if (user != null) {
+            // ログイン済みユーザなのでお気に入りボタンを表示する
+            buttonFav.setVisibility(View.VISIBLE);
+
+            // TODO お気に入り登録状況によってボタンのtextを変更
+            
+        } else {
+            // ログインしていないユーザなのでお気に入りボタンを非表示にして質問詳細ListViewを上に詰める
+            buttonFav.setVisibility(View.GONE);
+        }
+
 
         // ListViewの準備
         mListView = (ListView) findViewById(R.id.listView);
@@ -108,5 +128,14 @@ public class QuestionDetailActivity extends AppCompatActivity {
         DatabaseReference dataBaseReference = FirebaseDatabase.getInstance().getReference();
         mAnswerRef = dataBaseReference.child(Const.ContentsPATH).child(String.valueOf(mQuestion.getGenre())).child(mQuestion.getQuestionUid()).child(Const.AnswersPATH);
         mAnswerRef.addChildEventListener(mEventListener);
+
+
+        // お気に入りボタンを押された時の処理
+        mButtonFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO favButtonが押された場合の処理
+            }
+        });
     }
 }
