@@ -133,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordEditText = (EditText) findViewById(R.id.passwordText);
         mNameEditText = (EditText) findViewById(R.id.nameText);
 
+
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("処理中...");
 

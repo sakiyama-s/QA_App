@@ -9,19 +9,28 @@
     android:paddingTop="16dp"
     tools:context=".QuestionDetailActivity">
 
-    <ListView
+    <Button
+        android:id="@+id/button_fav"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/listView"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:text="お気に入り登録"
+        android:background="@drawable/custom_button"
+        android:textColor="@color/colorButtonText" />
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_fav" />
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
         android:src="@drawable/plus" />
 
