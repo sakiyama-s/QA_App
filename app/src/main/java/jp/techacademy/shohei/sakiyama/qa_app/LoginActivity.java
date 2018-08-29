@@ -86,6 +86,7 @@ public class LoginActivity extends AppCompatActivity {
                     FirebaseUser user = mAuth.getCurrentUser();
                     DatabaseReference userRef = mDataBaseReference.child(Const.UsersPATH).child(user.getUid());
 
+
                     if (mIsCreateAccount) {
                         // アカウント作成の時は表示名をFirebaseに保存する
                         String name = mNameEditText.getText().toString();
@@ -93,11 +94,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         Map<String,String> data = new HashMap<>();
                         data.put("name", name);
-                        //data.put("tes",name);
 
 
-                        //Map<String, User> data = new HashMap<>();
-                        //data.put("name", new User(name));
 
 
 
