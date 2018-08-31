@@ -36,9 +36,8 @@ public class QuestionDetailActivity extends AppCompatActivity {
     private ProgressDialog mProgress;
     private boolean favFlag = false;
 
-
-    private DatabaseReference mAnswerRef;
     private DatabaseReference mFavoriteRef;
+    private DatabaseReference mAnswerRef;
 
     private ChildEventListener mFavoritesEventListener = new ChildEventListener() {
         @Override
@@ -48,12 +47,15 @@ public class QuestionDetailActivity extends AppCompatActivity {
             if(favoritesId != null){
 
                 // お気に入り登録されていた時
-                Log.d("sa-ki" ,"ログインしていてfavもされている状態");
-                buttonFav.setText("お気に入り解除");
+                Log.d("sa-ki" ,"お気に入り登録された");
+                buttonFav.setText(Const.FavoritePositive);
+                favFlag = true;
+
             }else{
                 // お気に入り登録されていない時
-                Log.d("sa-ki", "ログインしているがfavされていない");
-                buttonFav.setText("お気に入り登録");
+                Log.d("sa-ki", "お気に入り登録解除された");
+                buttonFav.setText(Const.FavoriteNegative);
+                favFlag = false;
 
             }
 
@@ -67,6 +69,18 @@ public class QuestionDetailActivity extends AppCompatActivity {
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
 
+            String favoritesId = dataSnapshot.getKey();
+
+
+
+            if(favoritesId != null){
+                // お気に入りボタンリスナでお気に入り登録の解除がなされた
+                favFlag = false;
+                buttonFav.setText(Const.FavoriteNegative);
+            }else{
+                favFlag = true;
+                buttonFav.setText(Const.FavoritePositive);
+            }
         }
 
         @Override
@@ -146,11 +160,12 @@ public class QuestionDetailActivity extends AppCompatActivity {
             buttonFav.setVisibility(View.VISIBLE);
 
 
-            // TODO firebaseにfav情報があるかを確認し、有無によってボタンのtextを変化させる
+
             DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
             mFavoriteRef = mDatabaseReference.child(Const.UsersPATH).child(user.getUid()).child(Const.FavoritesPATH);
             mFavoriteRef.addChildEventListener(mFavoritesEventListener);
 
+ 
             if(favFlag){
                 //　すでにお気に入り登録されている
                 buttonFav.setText(Const.FavoritePositive);
@@ -199,30 +214,21 @@ public class QuestionDetailActivity extends AppCompatActivity {
         mButtonFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO favButtonが押された場合の処理
+
 
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 DatabaseReference dataBaseReference = FirebaseDatabase.getInstance().getReference();
                 mFavoriteRef = dataBaseReference.child(Const.UsersPATH).child(user.getUid()).child(Const.FavoritesPATH);
 
 
-
-                Log.d("sa-ki" ,"users_id->" + user.getUid());
-                Log.d("sa-ki", "path ->"+ mFavoriteRef.toString());
-                Log.d("sa-ki", "question_id-> " + mQuestion.getQuestionUid());
-
-                Log.d("sa-ki", "getKey() -> " + mFavoriteRef.getKey());
-
-
-
                 mFavoriteRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        Log.d("sa-ki", "called onDataChange");
                         HashMap map = (HashMap) dataSnapshot.getValue();
 
                         favFlag = false;
 
+                        String questionId_tmp = "";
 
                         // ユーザが、いま開いている質問をすでにお気に入り登録しているか確認する。
                         // 登録していなければfirebaseに追加
@@ -232,16 +238,17 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
                                 HashMap tmp = (HashMap) map.get((String) key);
 
-                                Log.d("sa-ki", "ループ内keyword -> " + key.toString());
+                                Log.d("sa-ki", "key.toString  -----> " + key.toString());
+                                Log.d("sa-ki", "tmp.get(questionId) ----->" + tmp.get("questionId"));
+                                Log.d("sa-ki", "mQuestion.getQuestionUid ------> " + mQuestion.getQuestionUid());
                                 if( tmp.get("questionId").equals(mQuestion.getQuestionUid())){
                                     // もうすでにお気に入り登録されている場合
                                     favFlag = true;
-
+                                    questionId_tmp = key.toString();
+                                    break;
                                 }else{
                                     // まだお気に入り登録されていない場合
                                     favFlag = false;
-
-
                                 }
 
                                 Log.d("sa-ki",String.valueOf(favFlag));
@@ -250,9 +257,10 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
                         if(favFlag){
                             // すでにお気に入り登録されている場合はfirebaseから削除
-                            mFavoriteRef.removeValue();
+                            mFavoriteRef.child(questionId_tmp).removeValue();
                             buttonFav.setText(Const.FavoritePositive);
 
+                            favFlag = false;
                             Log.d("sa-ki","お気に入り登録されていたので、解除した");
                         }else{
                             // まだお気に入り登録されていないので、firebaseに追加
@@ -261,6 +269,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
                             mFavoriteRef.push().setValue(data);
                             buttonFav.setText(Const.FavoriteNegative);
 
+                            favFlag = true;
                             Log.d("sa-ki", "まだお気に入り登録されていなかったので、登録した");
                         }
 
@@ -271,12 +280,10 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
                     }
                 });
-
-                Log.d("sa-ki","called setValue");
-
-
-
             }
         });
+        DatabaseReference dataBaseReference = FirebaseDatabase.getInstance().getReference();
+        mAnswerRef = dataBaseReference.child(Const.ContentsPATH).child(String.valueOf(mQuestion.getGenre())).child(mQuestion.getQuestionUid()).child(Const.AnswersPATH);
+        mAnswerRef.addChildEventListener(mEventListener);
     }
 }
