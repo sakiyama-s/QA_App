@@ -92,26 +92,23 @@ public class LoginActivity extends AppCompatActivity {
                         String name = mNameEditText.getText().toString();
 
 
-                        Map<String,String> data = new HashMap<>();
+                        Map<String, String> data = new HashMap<>();
                         data.put("name", name);
-
-
-
-
 
                         userRef.setValue(data);
 
                         // 表示名をPrefarenceに保存する
                         saveName(name);
 
-                        Log.d("sa-ki","アカウント登録");
+                        Log.d("sa-ki", "アカウント登録");
                     } else {
                         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
                                 Map data = (Map) snapshot.getValue();
-                                saveName((String)data.get("name"));
+                                saveName((String) data.get("name"));
                             }
+
                             @Override
                             public void onCancelled(DatabaseError firebaseError) {
                             }
@@ -152,7 +149,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // キーボードが出てたら閉じる
-                InputMethodManager im = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 im.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 String email = mEmailEditText.getText().toString();
@@ -176,7 +173,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // キーボードが出てたら閉じる
-                InputMethodManager im = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 im.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
                 String email = mEmailEditText.getText().toString();

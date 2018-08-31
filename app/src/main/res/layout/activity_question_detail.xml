@@ -9,20 +9,33 @@
     android:paddingTop="16dp"
     tools:context=".QuestionDetailActivity">
 
-    <Button
-        android:id="@+id/button_fav"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/favView">
+    <Button
+        android:id="@+id/button_fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:text="お気に入り登録"
+        android:layout_weight="3"
         android:background="@drawable/custom_button"
         android:textColor="@color/colorButtonText" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="仮"
+            />
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_fav" />
+        android:layout_below="@+id/favView" />
 
 
     <android.support.design.widget.FloatingActionButton
