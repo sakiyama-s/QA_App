@@ -335,6 +335,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
                             // まだお気に入り登録されていないので、firebaseに追加
                             Map<String, String> data = new HashMap<>();
                             data.put("questionId", mQuestion.getQuestionUid());
+                            data.put("genre",String.valueOf(mQuestion.getGenre()));
 
                             mFavoriteRef.push().setValue(data);
                             buttonFav.setText(Const.FavoriteNegative);

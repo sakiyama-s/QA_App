@@ -9,6 +9,7 @@ public class Favorite implements Serializable {
     private String mGenre;
     private ArrayList<String> mQuestionUidList;
 
+    // 未使用のクラス
     public Favorite(String favId, String questionUid, String genre) {
         mFavId = favId;
         mQuestionUid = questionUid;

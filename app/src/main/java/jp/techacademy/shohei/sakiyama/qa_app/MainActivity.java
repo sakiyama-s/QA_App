@@ -230,6 +230,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_favorite) {
             mToolbar.setTitle("お気に入り");
             mGenre = 5;
+            Intent intent = new Intent(getApplicationContext(), FavoriteListActivity.class);
+            startActivity(intent);
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
