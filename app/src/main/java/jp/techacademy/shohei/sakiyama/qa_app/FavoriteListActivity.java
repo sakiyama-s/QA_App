@@ -38,13 +38,14 @@ public class FavoriteListActivity extends AppCompatActivity {
     private QuestionsListAdapter mAdapter;
     private String mQuestionId;
     private int mGenre;
+    private boolean onCreateFlag = false;
 
-    private boolean favFlag = false;
 
     private ChildEventListener mFavoriteEventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
+            Log.d("sa-ki", "called onChildAdded");
             HashMap map = (HashMap) dataSnapshot.getValue();
 
             mQuestionId = (String) map.get("questionId");
@@ -55,7 +56,6 @@ public class FavoriteListActivity extends AppCompatActivity {
             mQuestionIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d("sa-ki","called onDataChange");
                     HashMap map = (HashMap) dataSnapshot.getValue();
                     String title = (String) map.get("title");
                     String body = (String) map.get("body");
@@ -86,10 +86,7 @@ public class FavoriteListActivity extends AppCompatActivity {
                     mQuestionArrayList.add(question);
                     mAdapter.notifyDataSetChanged();
 
-                    Log.d("sa-ki", "title" + title);
-                    Log.d("sa-ki", "body" + body);
-                    Log.d("sa-ki", "QuestionArralyListの要素数 ---> " + String.valueOf(mQuestionArrayList.size()));
-                }
+             }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -122,9 +119,43 @@ public class FavoriteListActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onPause(){
+        super.onPause();
+        onCreateFlag = false;
+
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        // お気に入り一覧画面でお気に入り解除してこのアクティビティに戻ってきたときのための処理
+        // その場合、onCreateFlagはfalseになるはず
+        if(onCreateFlag == true){
+            return;
+        }else{
+            mQuestionArrayList.clear();
+            mAdapter.setQuestionArrayList(mQuestionArrayList);
+            mListView.setAdapter(mAdapter);
+
+            mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            mFavoriteRef = mDatabaseReference.child(Const.UsersPATH).child(user.getUid()).child(Const.FavoritesPATH);
+            mFavoriteRef.addChildEventListener(mFavoriteEventListener);
+
+
+        }
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite_list);
+
+        Log.d("sa-ki2", "called onCreate");
+
+        onCreateFlag = true;
 
         setTitle("お気に入り");
 
