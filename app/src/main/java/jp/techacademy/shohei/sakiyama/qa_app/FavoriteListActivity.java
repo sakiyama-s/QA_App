@@ -28,7 +28,6 @@ import java.util.Map;
 
 public class FavoriteListActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
 
 
     private DatabaseReference mDatabaseReference;
@@ -47,14 +46,10 @@ public class FavoriteListActivity extends AppCompatActivity {
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
             HashMap map = (HashMap) dataSnapshot.getValue();
-            String tmp = (String) map.get("genre");
-            mGenre = Integer.parseInt(tmp);
 
             mQuestionId = (String) map.get("questionId");
-
-            Log.d("sa-ki", "favorite_onChildAdded ---> " + mQuestionId);
-            Log.d("sa-ki" ,"genre ---> " + String.valueOf(mGenre));
-
+            String tmp = (String) map.get("genre");
+            mGenre = Integer.parseInt(tmp);
 
             mQuestionIdRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre)).child(mQuestionId);
             mQuestionIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -131,6 +126,8 @@ public class FavoriteListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite_list);
 
+        setTitle("お気に入り");
+
         // ListViewの準備
         mListView = (ListView) findViewById(R.id.listView);
         mAdapter = new QuestionsListAdapter(this);
@@ -147,8 +144,6 @@ public class FavoriteListActivity extends AppCompatActivity {
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
 
         // 質問のリストをクリアしてから再度Adapterにセットし、AdapterをListViewにセットし直す
         mQuestionArrayList.clear();

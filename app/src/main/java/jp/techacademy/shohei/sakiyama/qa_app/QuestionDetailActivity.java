@@ -31,7 +31,6 @@ public class QuestionDetailActivity extends AppCompatActivity {
     private ListView mListView;
     private Question mQuestion;
     private QuestionDetailListAdapter mAdapter;
-    private Favorite mFavorite;
     private Button buttonFav;
     private ProgressDialog mProgress;
     private boolean favFlag = false;
@@ -146,7 +145,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            Log.d("sa-ki", "こっちのonChildが呼ばれたよ");
+
         }
 
         @Override
@@ -174,7 +173,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
         // 渡ってきたQuestionのオブジェクトを保持する
         Bundle extras = getIntent().getExtras();
         mQuestion = (Question) extras.get("question");
-        Log.d("sa-ki", "called onCreate!!!!");
+
 
         Button mButtonFav = (Button) findViewById(R.id.button_fav);
 

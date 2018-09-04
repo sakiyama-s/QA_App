@@ -190,6 +190,21 @@ public class MainActivity extends AppCompatActivity
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        Menu menu = navigationView.getMenu();
+        MenuItem menuItem = menu.findItem(R.id.nav_favorite);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null) {
+            // ログインしてないのでドロワーから「お気に入り」を
+            menuItem.setVisible(false);
+        }else{
+            menuItem.setVisible(true);
+        }
+
+
+
     }
 
     @Override
@@ -228,10 +243,11 @@ public class MainActivity extends AppCompatActivity
             mToolbar.setTitle("コンピューター");
             mGenre = 4;
         } else if (id == R.id.nav_favorite) {
-            mToolbar.setTitle("お気に入り");
-            mGenre = 5;
             Intent intent = new Intent(getApplicationContext(), FavoriteListActivity.class);
             startActivity(intent);
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
 
         }
 
