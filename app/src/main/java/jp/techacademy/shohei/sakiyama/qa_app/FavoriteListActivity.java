@@ -34,7 +34,7 @@ public class FavoriteListActivity extends AppCompatActivity {
     private ArrayList<Question> mQuestionArrayList;
     private QuestionsListAdapter mAdapter;
     private String mQuestionId;
-    private int mGenre;
+    //private int mGenre;
     private boolean onCreateFlag = false; // 別のactivityから遷移してきたときにリストを再更新するための管理フラグ
 
 
@@ -47,7 +47,7 @@ public class FavoriteListActivity extends AppCompatActivity {
 
             mQuestionId = (String) map.get("questionId");
             String tmp = (String) map.get("genre");
-            mGenre = Integer.parseInt(tmp);
+            final int mGenre = Integer.parseInt(tmp);
 
             mQuestionIdRef = mDatabaseReference.child(Const.ContentsPATH).child(String.valueOf(mGenre)).child(mQuestionId);
             mQuestionIdRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -124,20 +124,44 @@ public class FavoriteListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // お気に入り一覧画面でお気に入り解除してこのアクティビティに戻ってきたときのための処理
-        // その場合、onCreateFlagはfalseになっているはず
-        if (onCreateFlag == true) {
-            return;
-        } else {
-            mQuestionArrayList.clear();
-            mAdapter.setQuestionArrayList(mQuestionArrayList);
-            mListView.setAdapter(mAdapter);
 
-            mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            mFavoriteRef = mDatabaseReference.child(Const.UsersPATH).child(user.getUid()).child(Const.FavoritesPATH);
-            mFavoriteRef.addChildEventListener(mFavoriteEventListener);
+        // userがnullだったらMainActivityまで戻す
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            finish();
+
+        }else{
+            // お気に入り一覧画面でお気に入り解除してこのアクティビティに戻ってきたときのための処理
+            // その場合、onCreateFlagはfalseになっているはず
+            if (onCreateFlag == true) {
+                return;
+            } else {
+                mQuestionArrayList.clear();
+                mAdapter.setQuestionArrayList(mQuestionArrayList);
+                mListView.setAdapter(mAdapter);
+
+                // リスナーの二重登録を防ぐ
+                if(mFavoriteRef!=null){
+                    mFavoriteRef.removeEventListener(mFavoriteEventListener);
+                }
+
+                mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+                user = FirebaseAuth.getInstance().getCurrentUser();
+                mFavoriteRef = mDatabaseReference.child(Const.UsersPATH).child(user.getUid()).child(Const.FavoritesPATH);
+
+                Log.d("sa-ki", "mFavoriteRef --> "+ mFavoriteRef.toString());
+                // TODO お気に入りリストが空だったらこのアクティビティを終えてMainActivityに戻る。finish()
+//                if(mFavoriteRef==null){
+//                    Log.d("sa-ki", "mFavoriteRefがnullだったのでmainActivityに戻ります");
+//                    finish();
+//
+//                }
+                mFavoriteRef.addChildEventListener(mFavoriteEventListener);
+            }
         }
+
+
+
     }
 
     @Override

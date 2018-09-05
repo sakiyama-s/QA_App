@@ -32,7 +32,6 @@ public class QuestionDetailActivity extends AppCompatActivity {
     private Question mQuestion;
     private QuestionDetailListAdapter mAdapter;
     private Button buttonFav;
-    private ProgressDialog mProgress;
     private boolean favFlag = false;
 
     private DatabaseReference mFavoriteRef;
@@ -50,20 +49,15 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
                     HashMap tmp = (HashMap) favMap.get(key);
 
-                    Log.d("sa-ki", "key.toString  -----> " + key.toString());
-                    Log.d("sa-ki", "tmp.get(questionId) ----->" + tmp.get("questionId"));
-                    Log.d("sa-ki", "mQuestion.getQuestionUid ------> " + mQuestion.getQuestionUid());
                     if (tmp.get("questionId").equals(mQuestion.getQuestionUid())) {
                         // もうすでにお気に入り登録されている場合
                         favFlag = true;
-
                         break;
                     } else {
                         // まだお気に入り登録されていない場合
                         favFlag = false;
                     }
 
-                    Log.d("sa-ki", String.valueOf(favFlag));
                 }
             }
             if (favFlag) {
@@ -103,8 +97,6 @@ public class QuestionDetailActivity extends AppCompatActivity {
             } else {
                 buttonFav.setText(Const.FavoriteNegative);
             }
-
-            Log.d("sa-ki", "called onChildRemoved!!!__ flag:" + String.valueOf(favFlag));
 
 
         }
@@ -163,6 +155,19 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
         }
     };
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        // ログイン状態によってボタンの表示を変える処理
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user != null){
+            buttonFav.setVisibility(View.VISIBLE);
+        }else{
+            buttonFav.setVisibility(View.INVISIBLE);
+        }
+    }
 
 
     @Override
@@ -303,12 +308,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
                         // 登録していればfirebaseから削除
                         if (map != null) {
                             for (Object key : map.keySet()) {
-
                                 HashMap tmp = (HashMap) map.get((String) key);
-
-//                                Log.d("sa-ki", "key.toString  -----> " + key.toString());
-//                                Log.d("sa-ki", "tmp.get(questionId) ----->" + tmp.get("questionId"));
-//                                Log.d("sa-ki", "mQuestion.getQuestionUid ------> " + mQuestion.getQuestionUid());
                                 if (tmp.get("questionId").equals(mQuestion.getQuestionUid())) {
                                     // もうすでにお気に入り登録されている場合
                                     favFlag = true;
@@ -319,7 +319,6 @@ public class QuestionDetailActivity extends AppCompatActivity {
                                     favFlag = false;
                                 }
 
-                                Log.d("sa-ki", String.valueOf(favFlag));
                             }
                         }
 
@@ -329,7 +328,6 @@ public class QuestionDetailActivity extends AppCompatActivity {
                             buttonFav.setText(Const.FavoritePositive);
 
                             favFlag = false;
-                            Log.d("sa-ki", "お気に入り登録されていたので、解除した");
                         } else {
                             // まだお気に入り登録されていないので、firebaseに追加
                             Map<String, String> data = new HashMap<>();
@@ -340,7 +338,6 @@ public class QuestionDetailActivity extends AppCompatActivity {
                             buttonFav.setText(Const.FavoriteNegative);
 
                             favFlag = true;
-                            Log.d("sa-ki", "まだお気に入り登録されていなかったので、登録した");
                         }
 
                     }
