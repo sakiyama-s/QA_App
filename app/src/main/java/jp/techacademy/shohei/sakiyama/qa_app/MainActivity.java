@@ -197,9 +197,10 @@ public class MainActivity extends AppCompatActivity
         MenuItem menuItem = menu.findItem(R.id.nav_favorite);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user == null) {
-            // ログインしてないのでドロワーから「お気に入り」を
+            // ログインしてないのでドロワーから「お気に入り」を非表示に
             menuItem.setVisible(false);
         }else{
+            // ログインしているので「お気に入り」表示
             menuItem.setVisible(true);
         }
 

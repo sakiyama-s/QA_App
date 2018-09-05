@@ -27,9 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FavoriteListActivity extends AppCompatActivity {
-
-
-
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mFavoriteRef;
     private DatabaseReference mQuestionIdRef;
@@ -38,7 +35,7 @@ public class FavoriteListActivity extends AppCompatActivity {
     private QuestionsListAdapter mAdapter;
     private String mQuestionId;
     private int mGenre;
-    private boolean onCreateFlag = false;
+    private boolean onCreateFlag = false; // 別のactivityから遷移してきたときにリストを再更新するための管理フラグ
 
 
     private ChildEventListener mFavoriteEventListener = new ChildEventListener() {
@@ -86,15 +83,13 @@ public class FavoriteListActivity extends AppCompatActivity {
                     mQuestionArrayList.add(question);
                     mAdapter.notifyDataSetChanged();
 
-             }
+                }
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
                 }
             });
-
-
         }
 
         @Override
@@ -119,21 +114,21 @@ public class FavoriteListActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
+        // 別のactivityに遷移するときフラグ初期化
         onCreateFlag = false;
-
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
 
         // お気に入り一覧画面でお気に入り解除してこのアクティビティに戻ってきたときのための処理
-        // その場合、onCreateFlagはfalseになるはず
-        if(onCreateFlag == true){
+        // その場合、onCreateFlagはfalseになっているはず
+        if (onCreateFlag == true) {
             return;
-        }else{
+        } else {
             mQuestionArrayList.clear();
             mAdapter.setQuestionArrayList(mQuestionArrayList);
             mListView.setAdapter(mAdapter);
@@ -142,10 +137,7 @@ public class FavoriteListActivity extends AppCompatActivity {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             mFavoriteRef = mDatabaseReference.child(Const.UsersPATH).child(user.getUid()).child(Const.FavoritesPATH);
             mFavoriteRef.addChildEventListener(mFavoriteEventListener);
-
-
         }
-
     }
 
     @Override
@@ -153,8 +145,7 @@ public class FavoriteListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite_list);
 
-        Log.d("sa-ki2", "called onCreate");
-
+        //
         onCreateFlag = true;
 
         setTitle("お気に入り");
@@ -186,7 +177,6 @@ public class FavoriteListActivity extends AppCompatActivity {
         mFavoriteRef = mDatabaseReference.child(Const.UsersPATH).child(user.getUid()).child(Const.FavoritesPATH);
         mFavoriteRef.addChildEventListener(mFavoriteEventListener);
     }
-
 
 
 }
