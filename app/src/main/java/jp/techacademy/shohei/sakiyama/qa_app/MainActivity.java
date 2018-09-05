@@ -196,6 +196,8 @@ public class MainActivity extends AppCompatActivity
         Menu menu = navigationView.getMenu();
         MenuItem menuItem = menu.findItem(R.id.nav_favorite);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // ログイン状態によってドロワーに「お気に入り」を表示させるか分岐
         if(user == null) {
             // ログインしてないのでドロワーから「お気に入り」を非表示に
             menuItem.setVisible(false);
@@ -203,9 +205,6 @@ public class MainActivity extends AppCompatActivity
             // ログインしているので「お気に入り」表示
             menuItem.setVisible(true);
         }
-
-
-
     }
 
     @Override

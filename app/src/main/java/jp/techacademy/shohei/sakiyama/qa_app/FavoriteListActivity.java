@@ -42,7 +42,7 @@ public class FavoriteListActivity extends AppCompatActivity {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-            Log.d("sa-ki", "called onChildAdded");
+
             HashMap map = (HashMap) dataSnapshot.getValue();
 
             mQuestionId = (String) map.get("questionId");
